@@ -688,9 +688,6 @@ extern "C" int gui_init(void)
 
 extern "C" int gui_loadResources(void)
 {
-	//    unlink("/sdcard/video.last");
-	//    rename("/sdcard/video.bin", "/sdcard/video.last");
-	//    gRecorder = open("/sdcard/video.bin", O_CREAT | O_WRONLY);
 #ifndef TW_OEM_BUILD
 	int check = 0;
 	DataManager::GetValue(TW_IS_ENCRYPTED, check);
@@ -709,25 +706,7 @@ extern "C" int gui_loadResources(void)
 	{
 		std::string theme_path;
 
-		theme_path = DataManager::GetSettingsStoragePath();
-		if (!PartitionManager.Mount_Settings_Storage(false))
-		{
-			int retry_count = 5;
-			while (retry_count > 0 && !PartitionManager.Mount_Settings_Storage(false))
-			{
-				usleep(500000);
-				retry_count--;
-			}
-
-			if (!PartitionManager.Mount_Settings_Storage(false))
-			{
-				LOGERR("Unable to mount %s during GUI startup.\n",
-					   theme_path.c_str());
-				check = 1;
-			}
-		}
-
-		theme_path += "/TWRP/theme/ui.zip";
+		theme_path = "/res/ui.zip";
 		if (check || PageManager::LoadPackage("TWRP", theme_path, "main"))
 		{
 #endif // ifndef TW_OEM_BUILD
