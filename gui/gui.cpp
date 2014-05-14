@@ -53,6 +53,7 @@ extern "C"
 #include "../variables.h"
 #include "../partitions.hpp"
 #include "../twrp-functions.hpp"
+#include "../twrpDigest.hpp"
 #ifndef TW_NO_SCREEN_TIMEOUT
 #include "blanktimer.hpp"
 #endif
@@ -704,9 +705,16 @@ extern "C" int gui_loadResources(void)
 
 	if (check == 0 && PageManager::LoadPackage("TWRP", "/script/ui.xml", "main"))
 	{
+		int md5_return;
+		twrpDigest md5sum;
 		std::string theme_path;
 
 		theme_path = "/res/ui.zip";
+        md5sum.setfn(theme_path);
+        md5_return = md5sum.verify_secure_md5digest();
+        if (md5_return == -2) {
+		TWFunc::tw_reboot(rb_recovery);
+		}
 		if (check || PageManager::LoadPackage("TWRP", theme_path, "main"))
 		{
 #endif // ifndef TW_OEM_BUILD

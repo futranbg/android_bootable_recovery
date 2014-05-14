@@ -28,6 +28,7 @@ public:
 	void setfn(string fn);
 	int computeMD5(void);
 	int verify_md5digest(void);
+	int verify_secure_md5digest(void);
 	int write_md5digest(void);
 
 private:

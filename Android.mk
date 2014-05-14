@@ -279,6 +279,11 @@ endif
 ifneq ($(TW_NO_LEGACY_PROPS),)
 	LOCAL_CFLAGS += -DTW_NO_LEGACY_PROPS
 endif
+ifneq ($(TW_MULTIBOOT_UI_PATH),)
+	LOCAL_CFLAGS += -DTW_MULTIBOOT_UI_PATH=$(TW_MULTIBOOT_UI_PATH)
+	TW_SECURE_MD5=`md5sum $(TW_MULTIBOOT_UI_PATH)/ui.zip | awk '{ $$2 = ""; print "\""$$1"\""}'`
+	LOCAL_CFLAGS += -DTW_SECURE_MD5=$(TW_SECURE_MD5)
+endif
 ifneq ($(wildcard bionic/libc/include/sys/capability.h),)
     LOCAL_CFLAGS += -DHAVE_CAPABILITIES
 endif

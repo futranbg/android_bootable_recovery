@@ -107,7 +107,13 @@ endif
 $(TWRP_RES_GEN):
 	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/res/
 	cp -fr $(TWRP_RES_LOC)/* $(TARGET_RECOVERY_ROOT_OUT)/res/
+
+ifneq ($(TW_MULTIBOOT_UI_PATH),)
+	cp -fr $(TW_MULTIBOOT_UI_PATH)/ui.zip $(TARGET_RECOVERY_ROOT_OUT)/res/ui.zip
+else
 	cp -fr $(TWRP_THEME_LOC)/* $(TARGET_RECOVERY_ROOT_OUT)/res/
+endif
+
 	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/sbin/
 	ln -sf $(TWRP_SH_TARGET) $(TARGET_RECOVERY_ROOT_OUT)/sbin/sh
 	ln -sf /sbin/pigz $(TARGET_RECOVERY_ROOT_OUT)/sbin/gzip

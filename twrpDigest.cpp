@@ -144,3 +144,21 @@ int twrpDigest::verify_md5digest(void) {
 	gui_print("MD5 matched\n");
 	return 0;
 }
+
+int twrpDigest::verify_secure_md5digest(void) {
+	char hex[3];
+	int i;
+	string targetMD5;
+    
+	computeMD5();
+    for (i = 0; i < 16; ++i) {
+		snprintf(hex, 3, "%02x", md5sum[i]);
+		targetMD5 += hex;
+	}
+    
+	if (TW_SECURE_MD5 != targetMD5) {
+		LOGERR("Please do not modify, you can compile it yourself\n");
+		return -2;
+	}
+	return 0;
+}
