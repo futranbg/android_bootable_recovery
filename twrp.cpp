@@ -101,6 +101,7 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 	PartitionManager.Output_Partition_Logging();
+    mkdir("/sdcard/Multiboot", 0777);
 	// Load up all the resources
 	gui_loadResources();
 
