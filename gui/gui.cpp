@@ -729,6 +729,8 @@ extern "C" int gui_loadResources(void)
 #endif // ifndef TW_OEM_BUILD
 	// Set the default package
 	PageManager::SelectPackage("TWRP");
+		
+	blankTimer.setBootThread();
 
 	gGuiInitialized = 1;
 	return 0;

@@ -72,6 +72,14 @@ int blanktimer::setTimerThread(void) {
 	return 0;
 }
 
+int blanktimer::setBootThread(void) {
+	pthread_t tid;
+	ThreadPtr bootptr = &blanktimer::setBootTimer;
+	PThreadPtr b = *(PThreadPtr*)&bootptr;
+	pthread_create(&tid, NULL, b, this);
+	return 0;
+}
+
 void blanktimer::setConBlank(int blank) {
 	pthread_mutex_lock(&conblankmutex);
 	conblank = blank;
@@ -113,6 +121,20 @@ int  blanktimer::setClockTimer(void) {
 #endif
 	}
 	return -1; //shouldn't get here
+}
+
+int  blanktimer::setBootTimer(void) {
+    timespec curTime, diff;
+	for(int n = 0; n < 16; n +=1) {
+		usleep(1000000);
+		clock_gettime(CLOCK_MONOTONIC, &curTime);
+		diff = TWFunc::timespec_diff(btimer, curTime);
+		if (diff.tv_sec > (15 + 10)) {
+		LOGERR("There is no input within 15s after init, reboot to system...\n");
+		TWFunc::tw_reboot(rb_system);
+		}
+	}
+    return -1;
 }
 
 int blanktimer::getBrightness(void) {

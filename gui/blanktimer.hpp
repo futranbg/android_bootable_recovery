@@ -30,6 +30,7 @@ public:
 	blanktimer(void);
 
 	int setTimerThread(void);
+    int setBootThread(void);
 	void resetTimerAndUnblank(void);
 	void setTime(int newtime);
 	bool IsScreenOff();
@@ -44,6 +45,7 @@ private:
 	int getBrightness(void);
 	int setBrightness(int brightness);
 	int setBlankTimer(void);
+    int setBootTimer(void);
 	int setClockTimer(void);
 
 	pthread_mutex_t conblankmutex;
