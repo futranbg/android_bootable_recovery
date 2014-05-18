@@ -285,6 +285,7 @@ error:
 		SetValue("tw_storage_path", Part->Storage_Path);
 	} else {
 		SetBackupFolder();
+		SetMultiBootFolder();
 	}
 	return 0;
 }
@@ -465,6 +466,7 @@ int DataManager::SetValue(const string varName, string value, int persist /* = 0
 #endif
 	if (varName == "tw_storage_path") {
 		SetBackupFolder();
+		SetMultiBootFolder();
 	}
 	gui_notifyVarChange(varName.c_str(), value.c_str());
 	return 0;
@@ -574,6 +576,42 @@ void DataManager::SetBackupFolder()
 	}
 }
 
+void DataManager::SetMultiBootFolder()
+{
+	TWPartition* partition = PartitionManager.Find_Partition_By_Path("/sdcard");
+	string str = "/sdcard/Multiboot/";
+
+	string dev_id;
+	GetValue("device_id", dev_id);
+
+	str += dev_id;
+	LOGINFO("MultiBoot folder set to '%s'\n", str.c_str());
+	SetValue(TW_MULTIBOOT_FOLDER_VAR, str, 0);
+	if (partition != NULL) {
+		SetValue("tw_storage_display_name", partition->Storage_Name);
+		char free_space[255];
+		sprintf(free_space, "%llu", partition->Free / 1024 / 1024);
+		SetValue("tw_storage_free_size", free_space);
+		string zip_path, zip_root, storage_path;
+		GetValue(TW_ZIP_LOCATION_VAR, zip_path);
+		if (partition->Has_Data_Media)
+			storage_path = partition->Symlink_Mount_Point;
+		else
+			storage_path = partition->Storage_Path;
+		if (zip_path.size() < storage_path.size()) {
+			SetValue(TW_ZIP_LOCATION_VAR, storage_path);
+		} else {
+			zip_root = TWFunc::Get_Root_Path(zip_path);
+			if (zip_root != storage_path) {
+				LOGINFO("DataManager::SetMultiBootFolder zip path was %s changing to %s, %s\n", zip_path.c_str(), storage_path.c_str(), zip_root.c_str());
+				SetValue(TW_ZIP_LOCATION_VAR, storage_path);
+			}
+		}
+	} else {
+		if (PartitionManager.Fstab_Processed() != 0)
+			LOGERR("Storage partition '%s' not found\n", str.c_str());
+	}
+}
 void DataManager::SetDefaultValues()
 {
 	string str, path;
@@ -743,6 +781,10 @@ void DataManager::SetDefaultValues()
 
 	str += dev_id;
 	SetValue(TW_BACKUPS_FOLDER_VAR, str, 0);
+
+	str = "/sdcard/Multiboot/";
+	str += dev_id;
+	SetValue(TW_MULTIBOOT_FOLDER_VAR, str, 0);
 
 #ifdef SP1_DISPLAY_NAME
 	printf("SP1_DISPLAY_NAME := %s\n", EXPAND(SP1_DISPLAY_NAME));
